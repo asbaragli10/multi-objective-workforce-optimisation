@@ -9,7 +9,7 @@ from MT_SA import SA_pareto
 
 ######## Read my input data #####################
 #################################################
-data=pd.read_csv(r"Berwick_full_deadlines.csv")
+data=pd.read_csv(r"your_input_file.csv")
 
 data['deadline'] = pd.to_datetime(data['deadline'], dayfirst=True, errors='coerce')
 start_date = data['deadline'].min() - pd.Timedelta(days=7) # I suppose for all my products the design is ready one week in advance 
