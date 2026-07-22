@@ -120,7 +120,7 @@ In the evaluator, staffing may vary between days. The simulation therefore track
 | `Evaluation/` | Reconstructs selected schedules and produces time/station statistics. |
 | `Plots/` | Contains KPI plotting notebooks and publication figures. |
 
-`custom_search.py` and `neigh.py` contain earlier neighbourhood prototypes; the active search uses `adv_neigh.py`.
+`neigh.py` contains an earlier neighbourhood prototype; the active search uses `adv_neigh.py`.
 
 ## Installation
 
