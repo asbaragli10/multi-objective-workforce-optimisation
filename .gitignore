@@ -1,0 +1,17 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+.ipynb_checkpoints/
+
+# Private case-study data
+Berwick_full_deadlines.csv
+Data/Berwick_pred.csv
+
+# Optimisation outputs
+initial_solution.pkl
+initial_output.pkl
+pareto_archive.pkl
+pareto_frontier_summary.csv
+Pareto_SA_run_*.txt
+
