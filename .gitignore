@@ -4,9 +4,8 @@ __pycache__/
 .venv/
 .ipynb_checkpoints/
 
-# Private case-study data
-Berwick_full_deadlines.csv
-Data/Berwick_pred.csv
+# Local input data
+your_input_file.csv
 
 # Optimisation outputs
 initial_solution.pkl
@@ -14,4 +13,3 @@ initial_output.pkl
 pareto_archive.pkl
 pareto_frontier_summary.csv
 Pareto_SA_run_*.txt
-
