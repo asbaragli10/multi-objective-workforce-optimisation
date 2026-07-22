@@ -1,6 +1,6 @@
 # Multi-objective workforce optimisation for off-site assembly
 
-This repository implements the parallel Pareto Simulated Annealing framework presented in **“Multi-objective Workforce Allocation for Off-site Construction Assembly Using Parallel Simulated Annealing”** (TCOT 2026).
+This repository implements the parallel Pareto Simulated Annealing framework titled [**“Multi-objective Workforce Allocation for Off-site Construction Assembly Using Parallel Simulated Annealing”**](pdfs/TCOT_Final_AS.pdf), for the Conference Transforming Construction with Off-site Methods and Technologies (TCOT 2026).
 
 The method creates a day-by-day staffing plan for parallel assembly stations. It balances delivery reliability against labour expenditure while accounting for diminishing productivity gains when several workers share one station.
 
