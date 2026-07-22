@@ -14,17 +14,17 @@ Products enter the system in a fixed **Earliest Due Date (EDD)** sequence. For e
 
 The core decision variable is the staffing matrix
 
-\[
+$$
 W = [w_{d,s}] \in \mathbb{Z}^{D \times S},
-\]
+$$
 
-where \(w_{d,s}\) is the number of workers assigned to station \(s\) on day \(d\). A value of zero closes that station for the day. Each station is limited to `max_workers_per_station`, and its effective processing rate is
+where $w_{d,s}$ is the number of workers assigned to station $s$ on day $d$. A value of zero closes that station for the day. Each station is limited to `max_workers_per_station`, and its effective processing rate is
 
-\[
+$$
 v_{d,s} = w_{d,s}^{\alpha}, \qquad 0 < \alpha \leq 1,
-\]
+$$
 
-so the efficiency exponent \(\alpha\) captures coordination and workspace losses when multiple workers collaborate.
+so the efficiency exponent $\alpha$ captures coordination and workspace losses when multiple workers collaborate.
 
 The optimiser minimizes three objectives:
 
@@ -43,7 +43,17 @@ The modular neighbourhood implementation is in [`adv_neigh.py`](adv_neigh.py). `
 - **Station-day utilisation** shows where available staffed capacity is being consumed.
 - **Last used day** limits edits to the effective production horizon plus a short look-ahead buffer.
 
-`neighbour_staffing_plan_advanced()` samples one of three move families and retries when the sampled move is infeasible.
+`neighbour_staffing_plan_advanced()` samples one of three move families and retries when the sampled move is infeasible. **Each family has a user-defined selection probability**, supplied through `family_probs`:
+
+```python
+family_probs = {
+    "redistribute": 0.70,
+    "open_station": 0.15,
+    "close_station": 0.15,
+}
+```
+
+The three values must be non-negative with a positive total and are normalized internally, so they do not need to sum to exactly one. Setting a family's value to zero disables that family. After a family is selected, its own operator probabilities determine the specific move shown below.
 
 | Family | Operator | Within-family probability | Staffing change | Station assignment |
 |---|---|---:|---|---|
@@ -58,7 +68,7 @@ The modular neighbourhood implementation is in [`adv_neigh.py`](adv_neigh.py). `
 
 Redistribution moves preserve the active station structure and therefore reuse the realised job-to-station assignment. Opening and closing moves change station availability, so dynamic dispatch is recomputed. This is a deliberate runtime trade-off described in the paper.
 
-The family probabilities are configurable independently of the within-family probabilities. The defaults in `adv_neigh.py` are 70% redistribution, 15% opening, and 15% closing. The experiment configured in `main.py` uses 80%, 20%, and 0%, respectively.
+Family probabilities are configured independently of the within-family operator probabilities. The defaults in `adv_neigh.py` are 70% redistribution, 15% opening, and 15% closing. The experiment configured in `main.py` uses 80%, 20%, and 0%, respectively.
 
 ## Parallel Pareto Simulated Annealing
 
@@ -80,19 +90,22 @@ The industrial case-study data are **not distributed in this public repository**
 | `DIMPLE_count` | integer | Assembly workload proxy; the evaluator currently uses 60 seconds of base work per unit. |
 | `deadline` | date | Latest acceptable completion date, parsed day-first. |
 
-Additional production metadata can remain in the file but are not used by the optimiser. The case-study preparation workflow also retained `Len`, `Coil`, and `Howick Work Time`.
+### Product work time
 
-The following rows are **illustrative synthetic examples**, not records from the industrial dataset:
+For product $j$, `DIMPLE_count` defines the assembly workload $q_j$. The parameter $b$ is the average time required by one operator to complete one unit of work; the case study uses $b = 60$ seconds. The product's base work is therefore
 
-| AssemblyRef | Len | Coil | Howick Work Time | DIMPLE_count | deadline |
-|---|---:|---:|---:|---:|---|
-| FRAME-001 | 17884.80 | 100 | 214.42 | 30 | 12-May-25 |
-| FRAME-002 | 23396.85 | 100 | 291.12 | 52 | 12-May-25 |
-| FRAME-003 | 41170.61 | 100 | 508.71 | 82 | 19-May-25 |
-| FRAME-004 | 17626.18 | 100 | 284.25 | 58 | 10-Jun-25 |
-| FRAME-005 | 6557.92 | 100 | 112.76 | 20 | 02-Jul-25 |
+$$
+P_j = bq_j.
+$$
 
-Before running the current entry point, save your local input as `Berwick_full_deadlines.csv` in the repository root or update the `pd.read_csv(...)` path near the top of `main.py`. The filename is ignored by Git to prevent accidental publication.
+When $w_{d,s}$ workers are assigned to station $s$ on day $d$, their effective processing-speed multiplier is $w_{d,s}^{\alpha}$. If staffing remains constant while the product is processed, its effective work time is
+
+$$
+t_j(w_{d,s}) = \frac{P_j}{w_{d,s}^{\alpha}}
+              = \frac{bq_j}{w_{d,s}^{\alpha}}.
+$$
+
+In the evaluator, staffing may vary between days. The simulation therefore tracks the product's remaining base work and processes up to $T^{\max}w_{d,s}^{\alpha}$ base-work seconds on each working day, where $T^{\max}$ is the daily working-time limit. Unfinished work continues on the next staffed weekday. Other production metadata are not used to calculate work time.
 
 ## Repository structure
 
