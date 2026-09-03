@@ -160,4 +160,13 @@ The notebooks in `Evaluation/` load a saved solution or Pareto archive, reconstr
 
 ## Citation
 
-The accompanying paper has been accepted for TCOT 2026. The full citation will be provided in due course once the conference proceedings are published.
+If you are using this repository for research purposes, it would be appreciated if you could cite the following paper.
+
+```bibtex
+@article{sbaragli2026multi,
+  title={Multi-Objective Workforce Allocation for Off-Site Construction Assembly Using Parallel Simulated Annealing},
+  author={Sbaragli, Andrea and Xie, Xiang and Kassem, Mohamad},
+  journal={Transforming Construction with Off-Site Methods and Technologies},
+  year={2026}
+}
+```
